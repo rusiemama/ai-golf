@@ -1,13 +1,23 @@
+import express from "express";
+
+const app = express();
+app.use(express.json());
+
+const LINE_TOKEN = process.env.LINE_TOKEN;
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
 app.post("/webhook", async (req, res) => {
-  res.send("OK"); // 
+  res.send("OK");
 
   const events = req.body.events || [];
 
   for (const event of events) {
-    if (event.type === "message" && event.message.type === "text") {
+    try {
+      if (event.type !== "message" || event.message.type !== "text") continue;
+
       const userMessage = event.message.text;
 
-      const aiResponse = await fetch("https://api.openai.com/v1/responses", {
+      const aiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -15,13 +25,25 @@ app.post("/webhook", async (req, res) => {
         },
         body: JSON.stringify({
           model: "gpt-4.1-mini",
-          input: `あなたは初心者向けゴルフAIキャディです。短く、やさしく、実用的に答えてください。ユーザーの質問: ${userMessage}`,
+          messages: [
+            {
+              role: "system",
+              content:
+                "あなたは初心者向けのゴルフAIキャディです。短く、やさしく、実用的に答えてください。",
+            },
+            {
+              role: "user",
+              content: userMessage,
+            },
+          ],
+          temperature: 0.7,
         }),
       });
 
       const data = await aiResponse.json();
+
       const replyText =
-        data?.output?.[0]?.content?.[0]?.text || "うまく応答できませんでした。";
+        data?.choices?.[0]?.message?.content || "うまく応答できませんでした。";
 
       await fetch("https://api.line.me/v2/bot/message/reply", {
         method: "POST",
@@ -34,6 +56,13 @@ app.post("/webhook", async (req, res) => {
           messages: [{ type: "text", text: replyText }],
         }),
       });
+    } catch (error) {
+      console.error("Webhook error:", error);
     }
   }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on ${PORT}`);
 });
