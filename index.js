@@ -1,12 +1,6 @@
-import express from "express";
-
-const app = express();
-app.use(express.json());
-
-const LINE_TOKEN = process.env.LINE_TOKEN;
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-
 app.post("/webhook", async (req, res) => {
+  res.send("OK"); // 
+
   const events = req.body.events || [];
 
   for (const event of events) {
@@ -42,11 +36,4 @@ app.post("/webhook", async (req, res) => {
       });
     }
   }
-
-  res.sendStatus(200);
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`);
 });
