@@ -77,6 +77,26 @@ if (userMessage === "ラウンドモード") {
   });
   continue;
 }
+      if (userMessage === "練習モード") {
+  await fetch("https://api.line.me/v2/bot/message/reply", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${LINE_TOKEN}`,
+    },
+    body: JSON.stringify({
+      replyToken: event.replyToken,
+      messages: [
+        {
+          type: "text",
+          text:
+            "練習モードです。\n\n動画や写真を送ってください。\nAIがフォームや改善ポイントを分析します。\n\n正面または後方からのスイング動画がおすすめです。",
+        },
+      ],
+    }),
+  });
+  continue;
+}
       const aiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
