@@ -37,6 +37,26 @@ if (userMessage === "ラウンドモード") {
   });
   continue;
 }
+      if (userMessage === "スコア報告") {
+  await fetch("https://api.line.me/v2/bot/message/reply", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${LINE_TOKEN}`,
+    },
+    body: JSON.stringify({
+      replyToken: event.replyToken,
+      messages: [
+        {
+          type: "text",
+          text:
+            "ラウンドお疲れさまでした☺\n\nスコアカードの写真やスクショを送ってください。\n私がスコア・傾向・課題を分析します。\n\n※合計スコアだけでもOKです。",
+        },
+      ],
+    }),
+  });
+  continue;
+}
       const aiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
