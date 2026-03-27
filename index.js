@@ -17,7 +17,26 @@ app.post("/webhook", async (req, res) => {
       if (event.type !== "message" || event.message.type !== "text") continue;
 
       const userMessage = event.message.text;
-
+if (userMessage === "ラウンドモード") {
+  await fetch("https://api.line.me/v2/bot/message/reply", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${LINE_TOKEN}`,
+    },
+    body: JSON.stringify({
+      replyToken: event.replyToken,
+      messages: [
+        {
+          type: "text",
+          text:
+            "ラウンドモードを開始します。\n\n本日のゴルフ場名を教えてください。\n目標（例：100切り・安全に回る）があれば教えてください。\n\n迷った時だけ短く相談してください。\n例：120ヤード 右池\n\nコース図や距離表示のスクショがあれば、より具体的にアドバイスできます。",
+        },
+      ],
+    }),
+  });
+  continue;
+}
       const aiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
