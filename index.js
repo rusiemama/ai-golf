@@ -8,7 +8,8 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 app.post("/webhook", async (req, res) => {
   res.send("OK");
-
+　console.log("WEBHOOK HIT");
+  console.log(JSON.stringify(req.body));
   const events = req.body.events || [];
 
   for (const event of events) {
