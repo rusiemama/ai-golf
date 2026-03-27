@@ -42,9 +42,9 @@ app.post("/webhook", async (req, res) => {
       });
 
       const data = await aiResponse.json();
-
+console.log("OPENAI DATA:", JSON.stringify(data));
       const replyText =
-        data?.choices?.[0]?.message?.content || "テスト成功";
+    data?.choices?.[0]?.message?.content || "うまく応答できませんでした。";    
 
       await fetch("https://api.line.me/v2/bot/message/reply", {
         method: "POST",
