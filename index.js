@@ -57,6 +57,26 @@ if (userMessage === "ラウンドモード") {
   });
   continue;
 }
+      if (userMessage === "腕前登録") {
+  await fetch("https://api.line.me/v2/bot/message/reply", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${LINE_TOKEN}`,
+    },
+    body: JSON.stringify({
+      replyToken: event.replyToken,
+      messages: [
+        {
+          type: "text",
+          text:
+            "あなたのゴルフの腕前を分かる範囲で教えてください。\n\n・平均スコア\n・ドライバーの飛距離\n・その他よく利用されるクラブの飛距離\n・よく出るミス（例：右にスライス）\n・目標（例：100切り）\n\nこの情報をもとに、あなた専用のアドバイスをします。",
+        },
+      ],
+    }),
+  });
+  continue;
+}
       const aiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
