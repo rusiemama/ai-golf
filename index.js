@@ -8,8 +8,7 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 app.post("/webhook", async (req, res) => {
   res.send("OK");
-　console.log("WEBHOOK HIT");
-  console.log(JSON.stringify(req.body));
+  console.log("WEBHOOK HIT");
   const events = req.body.events || [];
 
   for (const event of events) {
@@ -17,86 +16,41 @@ app.post("/webhook", async (req, res) => {
       if (event.type !== "message" || event.message.type !== "text") continue;
 
       const userMessage = event.message.text;
-if (userMessage === "ラウンドモード") {
-  await fetch("https://api.line.me/v2/bot/message/reply", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${LINE_TOKEN}`,
-    },
-    body: JSON.stringify({
-      replyToken: event.replyToken,
-      messages: [
-        {
-          type: "text",
-          text:
-            "本日ラウンドされる\n\n⛳ゴルフ場名\n⛳コース\n⛳目標⛳最近のスイング等の特徴\n\nを教えてください。\n\nラウンド中は私にいつでも相談してください！\n\nコース図や距離表示のスクショがあれば、より具体的にアドバイスできます。\n\nでは！ラウド行ってらっしゃいませ💗",
-        },
-      ],
-    }),
-  });
-  continue;
-}
-      if (userMessage === "スコア報告") {
-  await fetch("https://api.line.me/v2/bot/message/reply", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${LINE_TOKEN}`,
-    },
-    body: JSON.stringify({
-      replyToken: event.replyToken,
-      messages: [
-        {
-          type: "text",
-          text:
-            "お疲れさまでした☺\n\nスコアカードの写真やスクショを送ってください。\n傾向・課題を分析します。\n\n※合計スコアだけでもOKです。",
-        },
-      ],
-    }),
-  });
-  continue;
-}
-      if (userMessage === "腕前登録") {
-  await fetch("https://api.line.me/v2/bot/message/reply", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${LINE_TOKEN}`,
-    },
-    body: JSON.stringify({
-      replyToken: event.replyToken,
-      messages: [
-        {
-          type: "text",
-          text:
-            "あなたのゴルフの腕前を分かる範囲で教えてください。\n\n・平均スコア\n・ドライバーの飛距離\n・その他よく利用されるクラブの飛距離\n・よく出るミス（例：右にスライス）\n・目標（例：100切り）\n\nこの情報をもとに、あなた専用のアドバイスをします。",
-        },
-      ],
-    }),
-  });
-  continue;
-}
-      if (userMessage === "練習モード") {
-  await fetch("https://api.line.me/v2/bot/message/reply", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${LINE_TOKEN}`,
-    },
-    body: JSON.stringify({
-      replyToken: event.replyToken,
-      messages: [
-        {
-          type: "text",
-          text:
-            "練習モードです。\n\n動画や写真を送ってください。\nフォームや改善ポイントを分析します。\n\n正面または後方からのスイング動画がおすすめです。",
-        },
-      ],
-    }),
-  });
-  continue;
-}
+
+      // --- リッチメニューおよび固定回答の分岐 ---
+
+      if (userMessage === "ラウンド報告 ⛳️") {
+        await replyToLine(event.replyToken, "お疲れさま！今日のラウンドはどうだった？\nスコアや、良かった点・悔しかった点を教えてよ！バディとしてしっかり記録しておくね。⛳️");
+        continue;
+      }
+
+      if (userMessage === "お悩み相談・メモ 💡") {
+        await replyToLine(event.replyToken, "どうした？今悩んでいることを何でも書き留めておこう。先生にも共有できるから、次回のレッスンがスムーズになるよ！💬");
+        continue;
+      }
+
+      if (userMessage === "自主トレ記録 🏌️‍♂️") {
+        await replyToLine(event.replyToken, "練習お疲れさま！スイング動画や写真があれば送ってね。今の頑張りが上達への一番の近道だよ！🔥");
+        continue;
+      }
+
+      if (userMessage === "なりたい自分計画 🚀") {
+        await replyToLine(event.replyToken, "「なりたい自分計画 🚀」だね！\n3ヶ月後、どんなゴルフをして笑っていたい？理想の姿を教えて！バディと先生で全力サポートするよ。✨");
+        continue;
+      }
+
+      if (userMessage === "プロに直接チャット 💬") {
+        await replyToLine(event.replyToken, "了解！ここからは先生に直接メッセージが届くよ。予約の相談や、技術的な深い質問は先生に聞いてみよう！🤝");
+        continue;
+      }
+
+      if (userMessage === "My カルテ設定 📋") {
+        await replyToLine(event.replyToken, "君のことをもっと教えて！平均スコアや飛距離、よく出るミスの傾向などを入力してね。君専用のアドバイスの精度が上がるよ。📋");
+        continue;
+      }
+
+      // --- AIバディ（OpenAI）による自動応答 ---
+
       const aiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -104,12 +58,19 @@ if (userMessage === "ラウンドモード") {
           Authorization: `Bearer ${OPENAI_API_KEY}`,
         },
         body: JSON.stringify({
-          model: "gpt-4o-mini",
+          model: "gpt-4o-mini", // 正しいモデル名に修正済み
           messages: [
             {
               role: "system",
-              content:
-                "あなたは初心者向けのゴルフAIキャディです。やさしく、短く、実用的に答えてください。ラウンド中の相談にはできるだけ1〜2文で返してください。危険な攻め方より安全な判断を優先してください。特にラウンド中は、迷った時にすぐ判断できるように、結論を先に短く伝えてください。安全第一で、無理な攻め方よりスコアを崩さない判断を優先してください。クラブ選択、狙いどころ、刻む判断、パターの考え方をシンプルに伝えてください。長文は避け、必要がなければ2文以内で答えてください。愛があり優しい言葉ではげますこともわすれないでください。専門用語はできるだけさけて誰が聞いてもわかるような言葉でおしえてください。",
+              content: `あなたはユーザーの親友であり、最高のゴルフ相棒（バディ）「My Buddy Golf」です。
+              「教える」のではなく「一緒にプレーを楽しむ」スタンスでいてください。
+              
+              【ルール】
+              1. 語尾は「〜だよ」「〜だね」「〜いこう！」など、親しみやすいタメ口。
+              2. 否定はせず、ミスには「ドンマイ！」「次があるよ」と全力で寄り添う。
+              3. 回答は超簡潔に（原則2文以内）。結論から言う。
+              4. 安全第一。「無理せず刻もう」「気楽にいこう」と緊張を解くアドバイスを優先。
+              5. 最後に必ずゴルフ系の絵文字（⛳️, 🏌️‍♂️, 🚀など）を1つ入れる。`
             },
             {
               role: "user",
@@ -121,26 +82,30 @@ if (userMessage === "ラウンドモード") {
       });
 
       const data = await aiResponse.json();
-console.log("OPENAI DATA:", JSON.stringify(data));
-      const replyText =
-    data?.choices?.[0]?.message?.content || "うまく応答できませんでした。";    
+      const replyText = data?.choices?.[0]?.message?.content || "ごめん、ちょっと調子が悪いみたい。もう一度話しかけてくれる？";
 
-      await fetch("https://api.line.me/v2/bot/message/reply", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${LINE_TOKEN}`,
-        },
-        body: JSON.stringify({
-          replyToken: event.replyToken,
-          messages: [{ type: "text", text: replyText }],
-        }),
-      });
+      await replyToLine(event.replyToken, replyText);
+
     } catch (error) {
       console.error("Webhook error:", error);
     }
   }
 });
+
+// LINEへの返信用共通関数
+async function replyToLine(replyToken, text) {
+  await fetch("https://api.line.me/v2/bot/message/reply", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.LINE_TOKEN}`,
+    },
+    body: JSON.stringify({
+      replyToken: replyToken,
+      messages: [{ type: "text", text: text }],
+    }),
+  });
+}
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
