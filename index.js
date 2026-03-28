@@ -17,34 +17,34 @@ app.post("/webhook", async (req, res) => {
 
       const userMessage = event.message.text;
 
-      // --- リッチメニューおよび固定回答の分岐 ---
+      // --- リッチメニューおよびキーワード判定（絵文字があってもなくても反応するように修正） ---
 
-      if (userMessage === "ラウンド報告 ⛳️") {
+      if (userMessage.includes("ラウンド報告")) {
         await replyToLine(event.replyToken, "お疲れさま！今日のラウンドはどうだった？\nスコアや、良かった点・悔しかった点を教えてよ！バディとしてしっかり記録しておくね。⛳️");
         continue;
       }
 
-      if (userMessage === "お悩み相談・メモ 💡") {
+      if (userMessage.includes("お悩み相談")) {
         await replyToLine(event.replyToken, "どうした？今悩んでいることを何でも書き留めておこう。先生にも共有できるから、次回のレッスンがスムーズになるよ！💬");
         continue;
       }
 
-      if (userMessage === "自主トレ記録 🏌️‍♂️") {
+      if (userMessage.includes("自主トレ記録")) {
         await replyToLine(event.replyToken, "練習お疲れさま！スイング動画や写真があれば送ってね。今の頑張りが上達への一番の近道だよ！🔥");
         continue;
       }
 
-      if (userMessage === "なりたい自分計画 🚀") {
+      if (userMessage.includes("なりたい自分計画")) {
         await replyToLine(event.replyToken, "「なりたい自分計画 🚀」だね！\n3ヶ月後、どんなゴルフをして笑っていたい？理想の姿を教えて！バディと先生で全力サポートするよ。✨");
         continue;
       }
 
-      if (userMessage === "プロに直接チャット 💬") {
+      if (userMessage.includes("プロに直接チャット")) {
         await replyToLine(event.replyToken, "了解！ここからは先生に直接メッセージが届くよ。予約の相談や、技術的な深い質問は先生に聞いてみよう！🤝");
         continue;
       }
 
-      if (userMessage === "My カルテ設定 📋") {
+      if (userMessage.includes("My カルテ設定")) {
         await replyToLine(event.replyToken, "君のことをもっと教えて！平均スコアや飛距離、よく出るミスの傾向などを入力してね。君専用のアドバイスの精度が上がるよ。📋");
         continue;
       }
@@ -58,7 +58,7 @@ app.post("/webhook", async (req, res) => {
           Authorization: `Bearer ${OPENAI_API_KEY}`,
         },
         body: JSON.stringify({
-          model: "gpt-4o-mini", // 正しいモデル名に修正済み
+          model: "gpt-4o-mini",
           messages: [
             {
               role: "system",
