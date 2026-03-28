@@ -34,19 +34,19 @@ app.post("/webhook", async (req, res) => {
 
         // リッチメニュー判定（丁寧かつ親しみやすい表現に修正）
         if (userMessage.includes("ラウンド報告")) {
-          await replyToLine(event.replyToken, `${userName}さん、お疲れさまです！今日のラウンドはいかがでしたか？\nスコアのスクショを送っていただければ、僕が内容を確認して記録しておきますね！手入力も大歓迎ですよ。⛳️`);
+          await replyToLine(event.replyToken, `${userName}さん、お疲れさまです！今日のラウンドはいかがでしたか？\nスコアのスクショを送っていただければ、僕が内容を確認して記録しておきますね！写真が粗いと間違えて読み取ってしまうことがあるかもしれません。ちょっとお手間になるかもしれませんが手入力も大歓迎です。⛳️`);
           continue;
         }
         if (userMessage.includes("お悩み相談")) {
-          await replyToLine(event.replyToken, `${userName}さん、どうしましたか？今悩んでいることを何でも書き留めておきましょう。先生にもしっかり共有しておきますね！💬`);
+          await replyToLine(event.replyToken, `${userName}さん、どうしましたか？今悩んでいることを何でもご相談ください。私と一緒に解決しましょう。`);
           continue;
         }
         if (userMessage.includes("自主トレ記録")) {
-          await replyToLine(event.replyToken, `${userName}さん、練習お疲れさまです！スイング動画や写真があればぜひ送ってください。一緒に振り返りましょう！🔥`);
+          await replyToLine(event.replyToken, `${userName}さん、自主トレお疲れ様でした！スイング動画や写真があればぜひ送ってください。一緒に振り返りましょう！🔥`);
           continue;
         }
         if (userMessage.includes("なりたい自分計画")) {
-          await replyToLine(event.replyToken, `「なりたい自分計画 🚀」ですね！\n${userName}さんは、3ヶ月後にどんなゴルフをしていたいですか？ぜひ理想の姿を聞かせてください！✨`);
+          await replyToLine(event.replyToken, `「なりたい自分計画 🚀」ですね！\n${userName}さんは、将来どんなゴルフをしていたいですか？ぜひ理想の姿を聞かせてください！✨`);
           continue;
         }
         if (userMessage.includes("プロに直接チャット")) {
@@ -54,7 +54,7 @@ app.post("/webhook", async (req, res) => {
           continue;
         }
         if (userMessage.includes("My カルテ設定")) {
-          await replyToLine(event.replyToken, `${userName}さんのことをもっと教えてください！入力していただくと、僕のアドバイスの精度もぐんと上がりますよ。📋`);
+          await replyToLine(event.replyToken, `${userName}さんのことをもっと教えてください！入力していただくと、私のアドバイスの精度もぐんと上がりますよ。📋`);
           continue;
         }
 
