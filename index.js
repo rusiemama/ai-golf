@@ -68,7 +68,7 @@ app.post("/webhook", async (req, res) => {
         const messageId = event.message.id;
         
         // 【修正箇所】短く、わかりやすく変更
-        await pushMessage(userId, `${userName}さん、画像解析中... Now Loading... ⛳️`);
+        await pushMessage(userId,`画像解析中... `);
 
         const imageResponse = await fetch(`https://api-data.line.me/v2/bot/message/${messageId}/content`, {
           headers: { Authorization: `Bearer ${LINE_TOKEN}` },
