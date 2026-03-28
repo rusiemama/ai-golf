@@ -20,7 +20,7 @@ app.post("/webhook", async (req, res) => {
       // --- リッチメニューおよびキーワード判定（絵文字があってもなくても反応するように修正） ---
 
       if (userMessage.includes("ラウンド報告")) {
-        await replyToLine(event.replyToken, "お疲れさま！今日のラウンドはどうだった？\nスコアや、良かった点・悔しかった点を教えてよ！バディとしてしっかり記録しておくね。⛳️");
+        await replyToLine(event.replyToken, "お疲れさま！今日のラウンドはどうだった？\nスコアや、良かった点・悔しかった点を教えて！あなたのバディとしてしっかり記録しておくね。⛳️");
         continue;
       }
 
