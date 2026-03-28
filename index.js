@@ -66,7 +66,7 @@ app.post("/webhook", async (req, res) => {
       // 2. 画像メッセージの処理
       else if (event.type === "message" && event.message.type === "image") {
         const messageId = event.message.id;
-        await pushMessage(userId, `${userName}さん、お写真ありがとうございます！今読み取っていますので、少しだけ待ってくださいね！⛳️`);
+        await pushMessage(userId, `${userName}さん、お写真ありがとうございます！今画像のデータを読み取っていますので少しだけ待ってくださいね！👏`);
 
         const imageResponse = await fetch(`https://api-data.line.me/v2/bot/message/${messageId}/content`, {
           headers: { Authorization: `Bearer ${LINE_TOKEN}` },
@@ -122,7 +122,7 @@ async function getAiResponse(messages, userName) {
     }),
   });
   const data = await response.json();
-  return data?.choices?.[0]?.message?.content || "すみません、少し調子が悪いみたいです。もう一度試していただけますか？";
+  return data?.choices?.[0]?.message?.content || "ごめんなさい🙇私、少し調子が悪いみたいです。もう一度試していただけますか？";
 }
 
 // 応答用（replyToken）
